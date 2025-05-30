@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nossas Coisinhas</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" type="imagex/png" href="heart.png	">
+</head>
+<body>
+  <header>
+    🤍Nossas Coisinhas🤍
+    <button class="toggle-theme" onclick="toggleTheme()">Modo Escuro</button>
+  </header>
+  <div class="container">
+    <div id="mainPage">
+      <div class="top-controls">
+        <div class="add-product-toggle">
+          <button id="toggleFormBtn">➕ Adicionar Produto</button>
+        </div>
+        <form id="productForm" class="product-form hidden">
+          <input type="text" id="nome" placeholder="Nome" required />
+          <input type="text" id="descricao" placeholder="Descrição" required />
+          <input type="text" id="preco" placeholder="Preço (ex: R$100,00)" required />
+          <input type="text" id="imagem" placeholder="URL da Imagem" required />
+          <select id="categoria" required>
+            <option value="">Categoria</option>
+            <option value="roupas">Roupas</option>
+            <option value="tenis">Tenis</option>
+            <option value="acessorios">Acessórios</option>
+            <option value="maquiagem">Maquiagem</option>
+            <option value="tecnologia">Tecnologia</option>
+            <option value="dia">Do dia</option>
+          </select>
+
+          <div class="form-group">
+            <label for="links">Links de Compra:</label>
+            <div id="linksContainer">
+              <div class="link-group">
+                <input type="text" name="links[]" class="link-input" placeholder="https://exemplo.com/produto" required />
+              </div>
+            </div>
+            <button type="button" id="addLinkBtn">➕ Adicionar outro link</button>
+          </div>
+
+          <button type="submit">Adicionar Produto</button>
+        </form>
+
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome..." />
+
+        <!-- BOTÃO PARA MOSTRAR/ESCONDER CATEGORIAS -->
+        <div class="category-toggle">
+          <button id="toggleCategoriesBtn">Mostrar Categorias</button>
+        </div>
+
+        <!-- CONTÊINER COLAPSÁVEL -->
+        <div class="category-buttons-container collapsed">
+          <div class="category-buttons" id="categoryButtons">
+            <button data-category="todos" class="active">Todos</button>
+            <button data-category="roupas">Roupas</button>
+            <button data-category="tenis">Tenis</button>
+            <button data-category="acessorios">Acessórios</button>
+            <button data-category="maquiagem">Maquiagem</button>
+            <button data-category="tecnologia">Tecnologia</button>
+            <button data-category="dia">Do dia</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="catalog" id="catalog"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div id="detailsPage" class="details-page">
+      <div class="details-content" id="detailsContent"></div>
+      <button class="back-btn" onclick="voltarCatalogo()">← Voltar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const toggleCategoriesBtn = document.getElementById('toggleCategoriesBtn');
+    const categoriesContainer = document.querySelector('.category-buttons-container');
+
+    let collapsed = true;
+
+    toggleCategoriesBtn.addEventListener('click', () => {
+      collapsed = !collapsed;
+      categoriesContainer.classList.toggle('collapsed');
+      toggleCategoriesBtn.textContent = collapsed ? 'Mostrar Categorias' : 'Ocultar Categorias';
+    });
+
+    // Inicialmente colapsado
+    categoriesContainer.classList.add('collapsed');
+  </script>
+</body>
+</html>
