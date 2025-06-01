@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -34,6 +35,16 @@ app.post('/api/produtos', async (req, res) => {
   const novo = new Produto(req.body);
   await novo.save();
   res.json(novo);
+});
+
+app.put('/api/produtos/:id', async (req, res) => {
+  try {
+    const atualizado = await Produto.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!atualizado) return res.sendStatus(404);
+    res.json(atualizado);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
 });
 
 app.delete('/api/produtos/:id', async (req, res) => {
