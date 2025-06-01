@@ -1,4 +1,15 @@
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+let produtos = [];
+const API_URL = "https://catalogo-backend-97xq.onrender.com/api/produtos";
+
+async function fetchProdutos() {
+  try {
+    const res = await fetch(API_URL);
+    produtos = await res.json();
+    renderCatalog();
+  } catch (err) {
+    console.error("Erro ao buscar produtos:", err);
+  }
+}
 
 const catalog = document.getElementById("catalog");
 const categoryButtons = document.querySelectorAll("#categoryButtons button");
@@ -14,8 +25,16 @@ let categoriaAtual = "todos";
 let paginaAtual = 1;
 const itensPorPagina = 20;
 
-function salvarProdutos() {
-  localStorage.setItem("produtos", JSON.stringify(produtos));
+async function salvarProdutos(produto) {
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(produto)
+    });
+  } catch (err) {
+    console.error("Erro ao salvar produto:", err);
+  }
 }
 
 function renderCatalog() {
@@ -59,16 +78,24 @@ function renderCatalog() {
     if (i === paginaAtual) btn.classList.add("active");
     btn.onclick = () => {
       paginaAtual = i;
-      renderCatalog();
+      fetchProdutos();
     };
     pagination.appendChild(btn);
   }
 }
 
-function removerProduto(nome) {
+async function removerProduto(nome) {
+  const produto = produtos.find(p => p.nome === nome);
+  if (!produto || !produto._id) return alert("Produto não encontrado");
+  try {
+    await fetch(`${API_URL}/${produto._id}`, { method: "DELETE" });
+    await fetchProdutos();
+  } catch (err) {
+    console.error("Erro ao remover produto:", err);
+  }
+
   produtos = produtos.filter(p => p.nome !== nome);
-  salvarProdutos();
-  renderCatalog();
+  fetchProdutos();
 }
 
 productForm.onsubmit = (e) => {
@@ -83,12 +110,12 @@ productForm.onsubmit = (e) => {
       .map(input => input.value.trim())
       .filter(val => val !== "")
   };
-  produtos.push(novo);
-  salvarProdutos();
+  
+  salvarProdutos(novo);
   productForm.reset();
   linksContainer.innerHTML = ''; // limpa links antigos
   adicionarCampoLink(); // adiciona um campo novo
-  renderCatalog();
+  fetchProdutos();
 };
 
 function abrirDetalhes(produto) {
@@ -135,13 +162,14 @@ document.getElementById("addLinkBtn").addEventListener("click", () => {
 });
 
 window.onload = () => {
+  fetchProdutos();
   const savedTheme = localStorage.getItem("modoEscuro");
   if (savedTheme === "sim") {
     document.body.classList.add("dark-mode");
     document.querySelector(".toggle-theme").textContent = "Modo Claro";
   }
   adicionarCampoLink(); // ao carregar a página, um campo já aparece
-  renderCatalog();
+  fetchProdutos();
 };
 
 document.getElementById("toggleFormBtn").addEventListener("click", () => {
@@ -157,16 +185,15 @@ categoryButtons.forEach(btn => {
     btn.classList.add("active");
     categoriaAtual = btn.dataset.category;
     paginaAtual = 1;
-    renderCatalog();
+    fetchProdutos();
   };
 });
 
 searchInput.addEventListener("input", () => {
   paginaAtual = 1;
-  renderCatalog();
+  fetchProdutos();
 });
 
-const toggleCategoriesBtn = document.getElementById("toggleCategoriesBtn");
 const categoriesContainer = document.querySelector(".category-buttons-container");
 let categoriasColapsadas = true;
 
@@ -177,3 +204,7 @@ toggleCategoriesBtn.addEventListener("click", () => {
 });
 
 
+
+
+// Atualização automática a cada 5 segundos
+setInterval(fetchProdutos, 5000);
