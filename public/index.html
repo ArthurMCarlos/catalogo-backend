@@ -11,7 +11,9 @@
 <body>
   <header>
     🤍Nossas Coisinhas🤍
-    <button class="toggle-theme" onclick="toggleTheme()">Modo Escuro</button>
+    <button class="toggle-theme" onclick="toggleTheme()" title="Trocar tema">
+  <img id="themeIcon" src="night-day.png" alt="Trocar tema" />
+</button>
   </header>
   <div class="container">
     <div id="mainPage">
@@ -30,6 +32,8 @@
             <option value="tenis">Tenis</option>
             <option value="acessorios">Acessórios</option>
             <option value="maquiagem">Maquiagem</option>
+            <option value="esmalte">Esmalte</option>
+            <option value="farmacia">Farmacia</option>
             <option value="tecnologia">Tecnologia</option>
             <option value="dia">Do dia</option>
           </select>
@@ -61,7 +65,8 @@
             <button data-category="roupas">Roupas</button>
             <button data-category="tenis">Tenis</button>
             <button data-category="acessorios">Acessórios</button>
-            <button data-category="maquiagem">Maquiagem</button>
+            <button data-category="maquiagem">Maquiagem</button>            <button data-category="esmalte">Esmalte</button>
+            <button data-category="farmacia">Farmacia</button>
             <button data-category="tecnologia">Tecnologia</button>
             <button data-category="dia">Do dia</button>
           </div>
