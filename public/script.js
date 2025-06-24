@@ -59,6 +59,7 @@ function renderCatalog() {
       <div class="item-info">
         <h3>${p.nome}</h3>
         <p>${p.descricao}</p>
+        <button class="edit-btn" onclick="event.stopPropagation(); editarProduto('${p.nome}')">✏️</button>
         <button class="remove-btn" onclick="event.stopPropagation(); removerProduto('${p.nome}')">🗑️</button>
         <span class="price">${p.preco}</span>
         <div class="links-preview">
@@ -66,6 +67,7 @@ function renderCatalog() {
         </div>
       </div>
     `;
+
     item.onclick = (e) => {
       if (!e.target.classList.contains('remove-btn')) abrirDetalhes(p);
     };
@@ -143,7 +145,6 @@ function toggleTheme() {
   document.body.classList.toggle("dark-mode");
   const isDark = document.body.classList.contains("dark-mode");
   localStorage.setItem("modoEscuro", isDark ? "sim" : "nao");
-  document.querySelector(".toggle-theme").textContent = isDark ? "Modo Claro" : "Modo Escuro";
 }
 
 function adicionarCampoLink(valor = "") {
@@ -166,7 +167,6 @@ window.onload = () => {
   const savedTheme = localStorage.getItem("modoEscuro");
   if (savedTheme === "sim") {
     document.body.classList.add("dark-mode");
-    document.querySelector(".toggle-theme").textContent = "Modo Claro";
   }
   adicionarCampoLink(); // ao carregar a página, um campo já aparece
   fetchProdutos();
