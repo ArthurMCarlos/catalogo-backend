@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,26 +5,133 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nossas Coisinhas</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="shortcut icon" type="imagex/png" href="heart.png	">
+  <link rel="shortcut icon" type="imagex/png" href="heart.png">
 </head>
 <body>
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
   <header>
-    🤍Nossas Coisinhas🤍
+    <div class="header-content">
+      <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <span class="header-title">Nossas Coisinhas</span>
+      <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </div>
+    <button class="manage-categories-btn" onclick="abrirGerenciamentoCategorias()" title="Gerenciar Categorias">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 1v6m0 6v6m5.5-11.5l-5 5m0 0l-5-5m5 5l5 5m-5-5l-5 5m11.5-5.5h-13"></path>
+      </svg>
+      <span>Categorias</span>
+    </button>
     <button class="toggle-theme" onclick="toggleTheme()" title="Trocar tema">
-  <img id="themeIcon" src="night-day.png" alt="Trocar tema" />
-</button>
+      <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+    </button>
   </header>
+
   <div class="container">
     <div id="mainPage">
       <div class="top-controls">
         <div class="add-product-toggle">
-          <button id="toggleFormBtn">➕ Adicionar Produto</button>
+          <button id="toggleFormBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Adicionar Produto</span>
+          </button>
         </div>
+
         <form id="productForm" class="product-form hidden">
-          <input type="text" id="nome" placeholder="Nome"  />
-          <input type="text" id="descricao" placeholder="Descrição"  />
-          <input type="text" id="preco" placeholder="Preço (ex: R$100,00)"  />
-          <input type="text" id="imagem" placeholder="URL da Imagem"  />
+          <input type="text" id="nome" placeholder="Nome" required />
+          <input type="text" id="descricao" placeholder="Descrição" required />
+          <input type="text" id="preco" placeholder="Preço (ex: R$100,00)" required />
+          
+          <!-- Sistema de Upload de Imagem -->
+          <div class="form-group full-width">
+            <label>Imagem do Produto:</label>
+            <div class="image-options">
+              <button type="button" class="option-btn active" data-option="upload">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Upload
+              </button>
+              <button type="button" class="option-btn" data-option="url">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                URL
+              </button>
+              <button type="button" class="option-btn" data-option="generic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                Ícone
+              </button>
+            </div>
+            
+            <!-- Upload Area -->
+            <div id="uploadArea" class="upload-area active">
+              <div class="upload-zone" id="uploadZone">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p>Arraste uma imagem ou clique para selecionar</p>
+                <span class="upload-hint">JPG, PNG, WEBP ou GIF (máx. 5MB)</span>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+              </div>
+              <div id="uploadProgress" class="upload-progress hidden">
+                <div class="progress-bar">
+                  <div class="progress-fill"></div>
+                </div>
+                <span class="progress-text">Enviando...</span>
+              </div>
+              <div id="imagePreview" class="image-preview hidden">
+                <img id="previewImg" src="" alt="Preview">
+                <button type="button" class="remove-preview" onclick="removePreview()">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <!-- URL Area -->
+            <div id="urlArea" class="url-area">
+              <input type="url" id="imagemUrl" placeholder="https://exemplo.com/imagem.jpg" />
+            </div>
+            
+            <!-- Generic Icons Area -->
+            <div id="genericArea" class="generic-area">
+              <div class="generic-grid" id="genericGrid"></div>
+            </div>
+            
+            <input type="hidden" id="imagem" required />
+          </div>
+          
           <select id="categoria" required>
             <option value="">Categoria</option>
             <option value="roupas">Roupas</option>
@@ -38,48 +144,289 @@
             <option value="dia">Do dia</option>
           </select>
 
-          <div class="form-group">
+          <div class="form-group full-width">
             <label for="links">Links de Compra:</label>
-            <div id="linksContainer">
-              <div class="link-group">
-                <input type="text" name="links[]" class="link-input" placeholder="https://exemplo.com/produto"  />
-              </div>
-            </div>
-            <button type="button" id="addLinkBtn">➕ Adicionar outro link</button>
+            <div id="linksContainer"></div>
+            <button type="button" id="addLinkBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Adicionar outro link
+            </button>
           </div>
 
           <button type="submit">Adicionar Produto</button>
         </form>
 
-        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome..." />
-
-        <!-- BOTÃO PARA MOSTRAR/ESCONDER CATEGORIAS -->
-        <div class="category-toggle">
-          <button id="toggleCategoriesBtn">Mostrar Categorias</button>
+        <!-- Busca com autocomplete -->
+        <div class="search-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nome..." />
+          <div id="searchSuggestions" class="search-suggestions"></div>
         </div>
 
-        <!-- CONTÊINER COLAPSÁVEL -->
+        <!-- Botão toggle categorias -->
+        <div class="category-toggle">
+          <button id="toggleCategoriesBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+            </svg>
+            <span>Mostrar Categorias</span>
+          </button>
+        </div>
+
+        <!-- Container categorias -->
         <div class="category-buttons-container collapsed">
           <div class="category-buttons" id="categoryButtons">
-            <button data-category="todos" class="active">Todos</button>
-            <button data-category="roupas">Roupas</button>
-            <button data-category="tenis">Tenis</button>
-            <button data-category="acessorios">Acessórios</button>
-            <button data-category="maquiagem">Maquiagem</button>            <button data-category="esmalte">Esmalte</button>
-            <button data-category="farmacia">Farmacia</button>
-            <button data-category="tecnologia">Tecnologia</button>
-            <button data-category="dia">Do dia</button>
+            <button data-category="todos" class="active">
+              <span>Todos</span>
+              <span class="category-count" data-count-category="todos">0</span>
+            </button>
+            <button data-category="roupas">
+              <span>Roupas</span>
+              <span class="category-count" data-count-category="roupas">0</span>
+            </button>
+            <button data-category="tenis">
+              <span>Tenis</span>
+              <span class="category-count" data-count-category="tenis">0</span>
+            </button>
+            <button data-category="acessorios">
+              <span>Acessorios</span>
+              <span class="category-count" data-count-category="acessorios">0</span>
+            </button>
+            <button data-category="maquiagem">
+              <span>Maquiagem</span>
+              <span class="category-count" data-count-category="maquiagem">0</span>
+            </button>
+            <button data-category="esmalte">
+              <span>Esmalte</span>
+              <span class="category-count" data-count-category="esmalte">0</span>
+            </button>
+            <button data-category="farmacia">
+              <span>Farmacia</span>
+              <span class="category-count" data-count-category="farmacia">0</span>
+            </button>
+            <button data-category="tecnologia">
+              <span>Tecnologia</span>
+              <span class="category-count" data-count-category="tecnologia">0</span>
+            </button>
+            <button data-category="dia">
+              <span>Do dia</span>
+              <span class="category-count" data-count-category="dia">0</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="catalog" id="catalog"></div>
+      <!-- Skeleton loading -->
+      <div class="catalog" id="catalog">
+        <div class="skeleton-item">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+          </div>
+        </div>
+        <div class="skeleton-item">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+          </div>
+        </div>
+        <div class="skeleton-item">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vazio -->
+      <div id="emptyState" class="empty-state hidden">
+        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente ajustar seus filtros ou adicione novos produtos</p>
+      </div>
+
       <div class="pagination" id="pagination"></div>
     </div>
 
+    <!-- Página de detalhes -->
     <div id="detailsPage" class="details-page">
       <div class="details-content" id="detailsContent"></div>
-      <button class="back-btn" onclick="voltarCatalogo()">← Voltar</button>
+      <button class="back-btn" onclick="voltarCatalogo()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Voltar
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de zoom de imagem -->
+  <div id="imageModal" class="image-modal hidden">
+    <div class="modal-backdrop" onclick="closeImageModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeImageModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <img id="modalImage" alt="Zoom do produto">
+    </div>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div id="editModal" class="edit-modal hidden">
+    <div class="modal-backdrop" onclick="closeEditModal()"></div>
+    <div class="modal-content-edit">
+      <div class="modal-header">
+        <h2>Editar Produto</h2>
+        <button class="modal-close" onclick="closeEditModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <form id="editForm" class="edit-form">
+        <!-- Conteúdo será inserido dinamicamente -->
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Gerenciamento de Categorias -->
+  <div id="categoriesModal" class="categories-modal hidden">
+    <div class="categories-modal-content">
+      <div class="categories-modal-header">
+        <h2>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Gerenciar Categorias
+        </h2>
+        <div class="categories-modal-actions">
+          <button class="btn-add-category" onclick="abrirFormCategoria()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Nova Categoria
+          </button>
+          <button class="btn-export-category" onclick="exportarCategorias()" style="background: var(--primary-color); color: white; border: none; border-radius: 8px; padding: 0.75rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-weight: 600;" title="Exportar categorias para JSON">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Exportar</span>
+          </button>
+          <button class="btn-import-category" onclick="importarCategorias()" style="background: var(--success-color); color: white; border: none; border-radius: 8px; padding: 0.75rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-weight: 600;" title="Importar categorias de JSON">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <span>Importar</span>
+          </button>
+          <button class="modal-close" onclick="fecharGerenciamentoCategorias()" style="background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: 8px; padding: 0.75rem; cursor: pointer;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="categories-modal-body">
+        <div id="categoriesGrid" class="categories-grid">
+          <!-- Categorias serão inseridas aqui -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Form de Categoria -->
+  <div id="categoryFormModal" class="category-form-modal hidden">
+    <div class="category-form-content">
+      <div class="category-form-header">
+        <h3 id="categoryFormTitle">Nova Categoria</h3>
+        <button class="modal-close" onclick="fecharFormCategoria()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="category-form-body">
+        <div class="category-preview">
+          <h4>Preview</h4>
+          <div class="preview-card">
+            <div class="preview-icon" id="previewIcon" style="background: #6366f1;">
+              <img src="/uploads/genericas/default.svg" alt="icone">
+            </div>
+            <div class="preview-info">
+              <h5 id="previewNome">nova categoria</h5>
+              <p id="previewDescricao">Descrição da categoria...</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="categoryForm">
+          <div class="form-field">
+            <label for="categoryNome">Nome da Categoria *</label>
+            <input type="text" id="categoryNome" placeholder="Ex: Eletrônicos" required>
+          </div>
+
+          <div class="form-field">
+            <label for="categoryDescricao">Descrição</label>
+            <textarea id="categoryDescricao" placeholder="Breve descrição da categoria"></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="categoryCor">Cor da Categoria</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="categoryCor" class="color-picker-input" value="#6366f1">
+              <div class="color-preview" id="colorPreview" style="background: #6366f1;">
+                #6366f1
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Ícone da Categoria</label>
+            <div class="icons-selector" id="iconsSelector">
+              <!-- Ícones serão inseridos aqui -->
+            </div>
+          </div>
+
+          <input type="hidden" id="categoryIcone" value="/uploads/genericas/default.svg">
+          <input type="hidden" id="categoryId" value="">
+        </form>
+      </div>
+      <div class="category-form-footer">
+        <button type="button" class="btn-cancel-category" onclick="fecharFormCategoria()">Cancelar</button>
+        <button type="button" class="btn-save-category" onclick="salvarCategoria()">Salvar Categoria</button>
+      </div>
     </div>
   </div>
 
@@ -87,17 +434,1271 @@
   <script>
     const toggleCategoriesBtn = document.getElementById('toggleCategoriesBtn');
     const categoriesContainer = document.querySelector('.category-buttons-container');
-
     let collapsed = true;
 
     toggleCategoriesBtn.addEventListener('click', () => {
       collapsed = !collapsed;
       categoriesContainer.classList.toggle('collapsed');
-      toggleCategoriesBtn.textContent = collapsed ? 'Mostrar Categorias' : 'Ocultar Categorias';
+      const btnText = toggleCategoriesBtn.querySelector('span');
+      btnText.textContent = collapsed ? 'Mostrar Categorias' : 'Ocultar Categorias';
     });
 
-    // Inicialmente colapsado
     categoriesContainer.classList.add('collapsed');
   </script>
+
+<script>
+(function () {
+  "use strict";
+
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    var labelWidth = selectedLabel.offsetWidth || 100; 
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; 
+      }
+
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    updateSelectedHighlight(target);
+
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+  }
+
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+</script>
+
+<script>
+
+(function () {
+  "use strict";
+
+  if (window.self === window.top) {
+    return; 
+  }
+
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    var labelWidth = selectedLabel.offsetWidth || 100; 
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; 
+      }
+
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    updateSelectedHighlight(target);
+
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+  }
+
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+</script>
+
+<script>
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; 
+  }
+
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    var labelWidth = selectedLabel.offsetWidth || 100; 
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; 
+      }
+
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    updateSelectedHighlight(target);
+
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+  }
+
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+</script>
 </body>
 </html>
