@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <path d="M100 40 L130 70 L130 140 L70 140 L70 70 Z" fill="#667eea" stroke="#5a67d8" stroke-width="3"/>
+  <path d="M70 70 L100 40 L130 70" fill="none" stroke="#5a67d8" stroke-width="3"/>
+  <rect x="85" y="110" width="30" height="30" fill="#5a67d8"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Roupas</text>
+</svg>

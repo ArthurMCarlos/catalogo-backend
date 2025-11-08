@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <polygon points="100,50 115,85 150,90 125,115 130,150 100,132 70,150 75,115 50,90 85,85" fill="#fbd38d" stroke="#f6ad55" stroke-width="3"/>
+  <circle cx="100" cy="95" r="15" fill="#ed8936"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Do Dia</text>
+</svg>

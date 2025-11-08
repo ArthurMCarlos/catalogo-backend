@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <rect x="60" y="70" width="80" height="50" rx="3" fill="#4299e1" stroke="#3182ce" stroke-width="3"/>
+  <rect x="70" y="80" width="60" height="30" fill="#63b3ed"/>
+  <circle cx="100" cy="120" r="5" fill="#3182ce"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Tecnologia</text>
+</svg>

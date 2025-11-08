@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <rect x="75" y="50" width="50" height="80" rx="5" fill="#f093fb" stroke="#d073db" stroke-width="3"/>
+  <circle cx="100" cy="50" r="12" fill="#764ba2"/>
+  <rect x="85" y="100" width="30" height="20" fill="#764ba2"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Maquiagem</text>
+</svg>

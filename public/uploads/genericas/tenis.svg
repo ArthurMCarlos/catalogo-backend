@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <ellipse cx="80" cy="100" rx="25" ry="35" fill="#764ba2" stroke="#5a4282" stroke-width="3"/>
+  <ellipse cx="120" cy="100" rx="25" ry="35" fill="#764ba2" stroke="#5a4282" stroke-width="3"/>
+  <path d="M55 100 Q50 120 55 140 L105 140 L105 100" fill="#667eea" stroke="#5a67d8" stroke-width="2"/>
+  <path d="M145 100 Q150 120 145 140 L95 140 L95 100" fill="#667eea" stroke="#5a67d8" stroke-width="2"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Tenis</text>
+</svg>

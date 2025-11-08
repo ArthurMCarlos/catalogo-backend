@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <circle cx="100" cy="80" r="30" fill="none" stroke="#f093fb" stroke-width="4"/>
+  <polygon points="100,110 85,130 115,130" fill="#f093fb"/>
+  <circle cx="100" cy="60" r="8" fill="#764ba2"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Acessorios</text>
+</svg>

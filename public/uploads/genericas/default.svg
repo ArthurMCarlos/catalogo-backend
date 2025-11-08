@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <rect x="60" y="60" width="80" height="80" rx="10" fill="#cbd5e0" stroke="#a0aec0" stroke-width="3"/>
+  <text x="100" y="105" font-family="Arial, sans-serif" font-size="48" fill="#718096" text-anchor="middle">?</text>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Padrao</text>
+</svg>

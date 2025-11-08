@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <rect x="80" y="60" width="40" height="60" rx="20" fill="#ed8936" stroke="#dd7726" stroke-width="3"/>
+  <circle cx="100" cy="50" r="15" fill="#dd7726"/>
+  <rect x="85" y="80" width="30" height="30" fill="#f6ad55"/>
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" fill="#2d3748" text-anchor="middle">Esmalte</text>
+</svg>
