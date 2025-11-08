@@ -1,16 +1,7 @@
 let produtos = [];
 const API_URL = "https://catalogo-backend-97xq.onrender.com/api/produtos";
 
-async function fetchProdutos() {
-  try {
-    const res = await fetch(API_URL);
-    produtos = await res.json();
-    renderCatalog();
-  } catch (err) {
-    console.error("Erro ao buscar produtos:", err);
-  }
-}
-
+// Elementos DOM
 const catalog = document.getElementById("catalog");
 const categoryButtons = document.querySelectorAll("#categoryButtons button");
 const mainPage = document.getElementById("mainPage");
@@ -20,32 +11,202 @@ const pagination = document.getElementById("pagination");
 const searchInput = document.getElementById("searchInput");
 const productForm = document.getElementById("productForm");
 const linksContainer = document.getElementById("linksContainer");
+const emptyState = document.getElementById("emptyState");
+const searchSuggestions = document.getElementById("searchSuggestions");
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
 
 let categoriaAtual = "todos";
 let paginaAtual = 1;
 const itensPorPagina = 20;
+let isLoading = false;
 
+// ===== TOAST NOTIFICATIONS =====
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icons = {
+    success: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    error: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+    warning: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+  };
+  
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type]}</span>
+    <span class="toast-message">${message}</span>
+    <button class="toast-close" onclick="this.parentElement.remove()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('hiding');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// ===== MODAL DE ZOOM DE IMAGEM =====
+function openImageModal(imageSrc) {
+  if (!imageSrc || imageSrc === '') return;
+  modalImage.src = imageSrc;
+  imageModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  imageModal.classList.add('hidden');
+  document.body.style.overflow = 'auto';
+  modalImage.src = '';
+}
+
+// Adicionar listener para ESC fechar modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) {
+    closeImageModal();
+  }
+});
+
+// ===== SKELETON LOADING =====
+function showSkeletonLoading() {
+  catalog.innerHTML = `
+    <div class="skeleton-item">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-content">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-content">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-content">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    </div>
+  `;
+  catalog.style.display = 'grid';
+  emptyState.classList.add('hidden');
+}
+
+function hideSkeletonLoading() {
+  const skeletons = document.querySelectorAll('.skeleton-item');
+  skeletons.forEach(skeleton => skeleton.remove());
+}
+
+// ===== FETCH PRODUTOS COM LOADING =====
+async function fetchProdutos(showLoading = true) {
+  if (isLoading) return;
+  isLoading = true;
+  
+  try {
+    if (showLoading) {
+      showSkeletonLoading();
+    }
+    const res = await fetch(API_URL);
+    produtos = await res.json();
+    
+    console.log("✓ Produtos carregados:", produtos.length);
+    
+    updateCategoryCounts();
+    renderCatalog();
+  } catch (err) {
+    console.error("✗ Erro ao buscar produtos:", err);
+    showToast("Erro ao carregar produtos. Tente novamente.", "error");
+    hideSkeletonLoading();
+  } finally {
+    isLoading = false;
+  }
+}
+
+// ===== ATUALIZAR CONTADORES DE CATEGORIA =====
+function updateCategoryCounts() {
+  const counts = { todos: produtos.length };
+  
+  produtos.forEach(p => {
+    if (p.categoria) {
+      counts[p.categoria] = (counts[p.categoria] || 0) + 1;
+    }
+  });
+  
+  console.log("✓ Contadores atualizados:", counts);
+  
+  document.querySelectorAll('.category-count').forEach(counter => {
+    const category = counter.getAttribute('data-count-category');
+    counter.textContent = counts[category] || 0;
+  });
+}
+
+// ===== SALVAR PRODUTO =====
 async function salvarProdutos(produto) {
   try {
-    await fetch(API_URL, {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(produto)
     });
+    
+    if (res.ok) {
+      showToast("Produto adicionado com sucesso!", "success");
+      return true;
+    } else {
+      throw new Error("Erro ao salvar produto");
+    }
   } catch (err) {
     console.error("Erro ao salvar produto:", err);
+    showToast("Erro ao adicionar produto. Tente novamente.", "error");
+    return false;
   }
 }
 
+// ===== RENDERIZAR CATÁLOGO =====
 function renderCatalog() {
+  hideSkeletonLoading();
   catalog.innerHTML = "";
   pagination.innerHTML = "";
 
-  const termo = searchInput.value.toLowerCase();
-  const filtrados = produtos.filter(p =>
-    (categoriaAtual === "todos" || p.categoria === categoriaAtual) &&
-    p.nome.toLowerCase().includes(termo)
-  );
+  const termo = searchInput.value.toLowerCase().trim();
+  
+  // Filtrar produtos
+  const filtrados = produtos.filter(p => {
+    // Verificar categoria
+    const matchCategoria = categoriaAtual === "todos" || (p.categoria && p.categoria === categoriaAtual);
+    
+    // Verificar busca
+    const matchBusca = termo === "" || (p.nome && p.nome.toLowerCase().includes(termo));
+    
+    return matchCategoria && matchBusca;
+  });
+  
+  console.log(`✓ Renderizando: Categoria="${categoriaAtual}" | Busca="${termo}" | Encontrados=${filtrados.length}/${produtos.length}`);
+
+  // Mostrar estado vazio se não houver produtos
+  if (filtrados.length === 0) {
+    catalog.style.display = 'none';
+    emptyState.classList.remove('hidden');
+    pagination.style.display = 'none';
+    return;
+  } else {
+    catalog.style.display = 'grid';
+    emptyState.classList.add('hidden');
+    pagination.style.display = 'flex';
+  }
 
   const totalPaginas = Math.ceil(filtrados.length / itensPorPagina);
   const inicio = (paginaAtual - 1) * itensPorPagina;
@@ -54,107 +215,296 @@ function renderCatalog() {
   filtrados.slice(inicio, fim).forEach((p) => {
     const item = document.createElement("div");
     item.classList.add("item");
+    
+    const linksHtml = p.link && p.link.length > 0 
+      ? p.link.map((l, i) => `<a href="${l}" target="_blank" onclick="event.stopPropagation()">Link ${i + 1}</a>`).join("")
+      : '<span style="color: var(--text-muted); font-size: 0.8rem;">Sem links disponíveis</span>';
+    
     item.innerHTML = `
-      <img src="${p.imagem}" alt="${p.nome}">
+      <img src="${p.imagem}" alt="${p.nome}" onclick="event.stopPropagation(); openImageModal('${p.imagem}')">
       <div class="item-info">
         <h3>${p.nome}</h3>
-        <p>${p.descricao}</p>
-        <button class="edit-btn" onclick="event.stopPropagation(); editarProduto('${p.nome}')">✏️</button>
-        <button class="remove-btn" onclick="event.stopPropagation(); removerProduto('${p.nome}')">🗑️</button>
-        <span class="price">${p.preco}</span>
+        <p>${p.descricao || 'Sem descrição'}</p>
+        <button class="edit-btn" onclick="event.stopPropagation(); editarProduto('${p._id}')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </button>
+        <button class="remove-btn" onclick="event.stopPropagation(); removerProduto('${p._id}')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+        <span class="price">${p.preco || 'Preço não informado'}</span>
         <div class="links-preview">
-          ${p.link.map((l, i) => `<a href="${l}" target="_blank">Link ${i + 1}</a>`).join("")}
+          ${linksHtml}
         </div>
       </div>
     `;
 
     item.onclick = (e) => {
-      if (!e.target.classList.contains('remove-btn')) abrirDetalhes(p);
+      if (!e.target.closest('.remove-btn') && !e.target.closest('.edit-btn')) {
+        abrirDetalhes(p);
+      }
     };
     catalog.appendChild(item);
   });
 
-  for (let i = 1; i <= totalPaginas; i++) {
-    const btn = document.createElement("button");
-    btn.innerText = i;
-    if (i === paginaAtual) btn.classList.add("active");
-    btn.onclick = () => {
-      paginaAtual = i;
-      fetchProdutos();
-    };
-    pagination.appendChild(btn);
+  // Renderizar paginação
+  if (totalPaginas > 1) {
+    // Botão anterior
+    if (paginaAtual > 1) {
+      const prevBtn = document.createElement("button");
+      prevBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      `;
+      prevBtn.onclick = () => {
+        paginaAtual--;
+        renderCatalog();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      pagination.appendChild(prevBtn);
+    }
+
+    // Números de página
+    for (let i = 1; i <= totalPaginas; i++) {
+      if (
+        i === 1 || 
+        i === totalPaginas || 
+        (i >= paginaAtual - 1 && i <= paginaAtual + 1)
+      ) {
+        const btn = document.createElement("button");
+        btn.innerText = i;
+        if (i === paginaAtual) btn.classList.add("active");
+        btn.onclick = () => {
+          paginaAtual = i;
+          renderCatalog();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        pagination.appendChild(btn);
+      } else if (
+        (i === paginaAtual - 2 && i > 1) ||
+        (i === paginaAtual + 2 && i < totalPaginas)
+      ) {
+        const ellipsis = document.createElement("span");
+        ellipsis.textContent = "...";
+        ellipsis.style.padding = "0.75rem 0.5rem";
+        ellipsis.style.color = "var(--text-muted)";
+        pagination.appendChild(ellipsis);
+      }
+    }
+
+    // Botão próximo
+    if (paginaAtual < totalPaginas) {
+      const nextBtn = document.createElement("button");
+      nextBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      `;
+      nextBtn.onclick = () => {
+        paginaAtual++;
+        renderCatalog();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      pagination.appendChild(nextBtn);
+    }
   }
 }
 
-async function removerProduto(nome) {
-  const produto = produtos.find(p => p.nome === nome);
-  if (!produto || !produto._id) return alert("Produto não encontrado");
+// ===== REMOVER PRODUTO =====
+async function removerProduto(id) {
+  if (!confirm("Tem certeza que deseja remover este produto?")) return;
+  
   try {
-    await fetch(`${API_URL}/${produto._id}`, { method: "DELETE" });
-    await fetchProdutos();
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      showToast("Produto removido com sucesso!", "success");
+      await fetchProdutos(false);
+    } else {
+      throw new Error("Erro ao remover produto");
+    }
   } catch (err) {
     console.error("Erro ao remover produto:", err);
+    showToast("Erro ao remover produto. Tente novamente.", "error");
   }
-
-  produtos = produtos.filter(p => p.nome !== nome);
-  fetchProdutos();
 }
 
-productForm.onsubmit = (e) => {
+// ===== EDITAR PRODUTO (PLACEHOLDER) =====
+function editarProduto(id) {
+  showToast("Funcionalidade de edição em desenvolvimento", "warning");
+}
+
+// ===== FORMULÁRIO DE PRODUTO =====
+productForm.onsubmit = async (e) => {
   e.preventDefault();
+  
   const novo = {
-    nome: document.getElementById("nome").value,
-    descricao: document.getElementById("descricao").value,
-    preco: document.getElementById("preco").value,
-    imagem: document.getElementById("imagem").value,
+    nome: document.getElementById("nome").value.trim(),
+    descricao: document.getElementById("descricao").value.trim(),
+    preco: document.getElementById("preco").value.trim(),
+    imagem: document.getElementById("imagem").value.trim(),
     categoria: document.getElementById("categoria").value,
     link: Array.from(document.querySelectorAll(".link-input"))
       .map(input => input.value.trim())
       .filter(val => val !== "")
   };
   
-  salvarProdutos(novo);
-  productForm.reset();
-  linksContainer.innerHTML = ''; // limpa links antigos
-  adicionarCampoLink(); // adiciona um campo novo
-  fetchProdutos();
+  if (!novo.nome || !novo.categoria) {
+    showToast("Preencha todos os campos obrigatórios", "warning");
+    return;
+  }
+  
+  const success = await salvarProdutos(novo);
+  if (success) {
+    productForm.reset();
+    linksContainer.innerHTML = '';
+    adicionarCampoLink();
+    productForm.classList.add('hidden');
+    document.getElementById("toggleFormBtn").querySelector('span').textContent = "Adicionar Produto";
+    await fetchProdutos(false);
+  }
 };
 
+// ===== AUTOCOMPLETE NA BUSCA =====
+let searchTimeout;
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchTimeout);
+  paginaAtual = 1;
+  
+  const termo = searchInput.value.toLowerCase().trim();
+  
+  console.log(`✓ Busca digitada: "${termo}"`);
+  
+  // Renderizar imediatamente
+  renderCatalog();
+  
+  // Autocomplete
+  if (termo.length < 2) {
+    searchSuggestions.classList.remove('active');
+    searchSuggestions.innerHTML = '';
+    return;
+  }
+  
+  searchTimeout = setTimeout(() => {
+    const sugestoes = produtos
+      .filter(p => p.nome && p.nome.toLowerCase().includes(termo))
+      .slice(0, 5);
+    
+    console.log(`✓ Sugestões encontradas: ${sugestoes.length}`);
+    
+    if (sugestoes.length > 0) {
+      searchSuggestions.innerHTML = sugestoes.map(p => {
+        const nomeHighlight = p.nome.replace(
+          new RegExp(termo, 'gi'),
+          match => `<span class="suggestion-highlight">${match}</span>`
+        );
+        return `
+          <div class="suggestion-item" onclick="selecionarSugestao('${p.nome.replace(/'/g, "\\'")}')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <span>${nomeHighlight}</span>
+          </div>
+        `;
+      }).join('');
+      searchSuggestions.classList.add('active');
+    } else {
+      searchSuggestions.classList.remove('active');
+    }
+  }, 300);
+});
+
+function selecionarSugestao(nome) {
+  searchInput.value = nome;
+  searchSuggestions.classList.remove('active');
+  paginaAtual = 1;
+  renderCatalog();
+}
+
+// Fechar sugestões ao clicar fora
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrapper')) {
+    searchSuggestions.classList.remove('active');
+  }
+});
+
+// ===== DETALHES DO PRODUTO =====
 function abrirDetalhes(produto) {
   mainPage.style.display = "none";
   detailsPage.style.display = "block";
+  
+  const linksHtml = produto.link && produto.link.length > 0
+    ? produto.link.map((l, i) => `
+        <a href="${l}" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Comprar - Link ${i + 1}
+        </a>
+      `).join("")
+    : '<p style="color: var(--text-muted);">Nenhum link de compra disponível</p>';
+  
   detailsContent.innerHTML = `
-    <img src="${produto.imagem}" alt="${produto.nome}">
+    <img src="${produto.imagem}" alt="${produto.nome}" onclick="openImageModal('${produto.imagem}')">
     <div class="details-info">
       <h2>${produto.nome}</h2>
-      <p>${produto.descricao}</p>
-      <span class="price">${produto.preco}</span>
+      <p>${produto.descricao || 'Sem descrição disponível'}</p>
+      <span class="price">${produto.preco || 'Preço não informado'}</span>
       <div class="links-compra">
-        ${produto.link.map((l, i) => `<a href="${l}" target="_blank">Comprar - Link ${i + 1}</a>`).join("")}
+        ${linksHtml}
       </div>
     </div>
   `;
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function voltarCatalogo() {
   detailsPage.style.display = "none";
   mainPage.style.display = "block";
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ===== TEMA CLARO/ESCURO =====
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
   const isDark = document.body.classList.contains("dark-mode");
   localStorage.setItem("modoEscuro", isDark ? "sim" : "nao");
+  
+  showToast(
+    isDark ? "Modo escuro ativado" : "Modo claro ativado",
+    "success"
+  );
 }
 
+// ===== GERENCIAR LINKS =====
 function adicionarCampoLink(valor = "") {
   const grupo = document.createElement("div");
   grupo.className = "link-group";
   grupo.innerHTML = `
-    <input type="text" name="links[]" class="link-input" placeholder="https://exemplo.com/produto" value="${valor}" required />
-    <button type="button" class="remove-link-btn">✖</button>
+    <input type="text" name="links[]" class="link-input" placeholder="https://exemplo.com/produto" value="${valor}" />
+    <button type="button" class="remove-link-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
   `;
-  grupo.querySelector(".remove-link-btn").onclick = () => grupo.remove();
+  grupo.querySelector(".remove-link-btn").onclick = () => {
+    if (linksContainer.children.length > 1) {
+      grupo.remove();
+    } else {
+      showToast("Mantenha pelo menos um campo de link", "warning");
+    }
+  };
   linksContainer.appendChild(grupo);
 }
 
@@ -162,49 +512,404 @@ document.getElementById("addLinkBtn").addEventListener("click", () => {
   adicionarCampoLink();
 });
 
+// ===== TOGGLE FORMULÁRIO =====
+document.getElementById("toggleFormBtn").addEventListener("click", () => {
+  productForm.classList.toggle("hidden");
+  const btnSpan = document.getElementById("toggleFormBtn").querySelector('span');
+  btnSpan.textContent = productForm.classList.contains("hidden")
+    ? "Adicionar Produto"
+    : "Fechar Formulário";
+});
+
+// ===== FILTROS DE CATEGORIA =====
+categoryButtons.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Garantir que pegamos o botão, não elementos internos
+    const button = e.currentTarget;
+    const categoria = button.dataset.category;
+    
+    console.log(`✓ Clique em categoria: "${categoria}"`);
+    
+    // Atualizar estado visual
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    
+    // Atualizar filtro
+    categoriaAtual = categoria;
+    paginaAtual = 1;
+    
+    // Renderizar
+    renderCatalog();
+  });
+});
+
+// ===== INICIALIZAÇÃO =====
 window.onload = () => {
-  fetchProdutos();
+  console.log("✓ Sistema iniciando...");
+  
+  // Carregar tema salvo
   const savedTheme = localStorage.getItem("modoEscuro");
   if (savedTheme === "sim") {
     document.body.classList.add("dark-mode");
   }
-  adicionarCampoLink(); // ao carregar a página, um campo já aparece
-  fetchProdutos();
+  
+  // Adicionar campo de link inicial
+  adicionarCampoLink();
+  
+  // Garantir que o formulário está escondido
+  productForm.classList.add('hidden');
+  
+  // Carregar produtos
+  fetchProdutos(true).then(() => {
+    // Mensagem de boas-vindas após carregar
+    setTimeout(() => {
+      showToast("Bem-vindo ao Nossas Coisinhas!", "success");
+    }, 500);
+  });
 };
 
-document.getElementById("toggleFormBtn").addEventListener("click", () => {
-  productForm.classList.toggle("hidden");
-  document.getElementById("toggleFormBtn").textContent = productForm.classList.contains("hidden")
-    ? "➕ Adicionar Produto"
-    : "✖️ Fechar Formulário";
+// ===== ATUALIZAÇÃO AUTOMÁTICA =====
+setInterval(() => {
+  if (!isLoading && mainPage.style.display !== "none") {
+    console.log("✓ Atualização automática...");
+    fetchProdutos(false);
+  }
+}, 30000);
+
+
+// ===== SISTEMA DE UPLOAD DE IMAGENS =====
+
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const uploadProgress = document.getElementById('uploadProgress');
+const imagePreview = document.getElementById('imagePreview');
+const previewImg = document.getElementById('previewImg');
+const imagemHidden = document.getElementById('imagem');
+const imagemUrl = document.getElementById('imagemUrl');
+
+// Opções de imagem (Upload, URL, Genérico)
+const optionBtns = document.querySelectorAll('.option-btn');
+const uploadArea = document.getElementById('uploadArea');
+const urlArea = document.getElementById('urlArea');
+const genericArea = document.getElementById('genericArea');
+
+optionBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const option = btn.dataset.option;
+    
+    // Remover active de todos
+    optionBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Mostrar área correspondente
+    uploadArea.classList.remove('active');
+    urlArea.classList.remove('active');
+    genericArea.classList.remove('active');
+    
+    if (option === 'upload') {
+      uploadArea.classList.add('active');
+    } else if (option === 'url') {
+      urlArea.classList.add('active');
+    } else if (option === 'generic') {
+      genericArea.classList.add('active');
+      loadGenericIcons();
+    }
+  });
 });
 
-categoryButtons.forEach(btn => {
-  btn.onclick = () => {
-    categoryButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    categoriaAtual = btn.dataset.category;
-    paginaAtual = 1;
-    fetchProdutos();
+// Upload por clique
+uploadZone.addEventListener('click', () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    uploadImage(file);
+  }
+});
+
+// Drag & Drop
+uploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    uploadImage(file);
+  } else {
+    showToast('Por favor, envie apenas imagens', 'error');
+  }
+});
+
+// Função de upload
+async function uploadImage(file) {
+  // Validar tamanho
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Imagem muito grande. Máximo 5MB.', 'error');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('imagem', file);
+  
+  // Mostrar progress
+  uploadZone.style.display = 'none';
+  uploadProgress.classList.remove('hidden');
+  const progressFill = uploadProgress.querySelector('.progress-fill');
+  
+  // Simular progresso
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 10;
+    progressFill.style.width = progress + '%';
+    if (progress >= 90) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+  
+  try {
+    const response = await fetch(`${API_URL.replace('/produtos', '')}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    clearInterval(progressInterval);
+    progressFill.style.width = '100%';
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.erro || 'Erro ao enviar imagem');
+    }
+    
+    const data = await response.json();
+    
+    // Mostrar preview
+    setTimeout(() => {
+      uploadProgress.classList.add('hidden');
+      imagePreview.classList.remove('hidden');
+      previewImg.src = data.imageUrl;
+      imagemHidden.value = data.imageUrl;
+      showToast('Imagem enviada com sucesso!', 'success');
+    }, 500);
+    
+  } catch (error) {
+    console.error('Erro no upload:', error);
+    showToast(error.message, 'error');
+    uploadProgress.classList.add('hidden');
+    uploadZone.style.display = 'flex';
+    progressFill.style.width = '0%';
+  }
+}
+
+// Remover preview
+function removePreview() {
+  imagePreview.classList.add('hidden');
+  uploadZone.style.display = 'flex';
+  previewImg.src = '';
+  imagemHidden.value = '';
+  fileInput.value = '';
+}
+
+// URL de imagem
+imagemUrl.addEventListener('input', () => {
+  imagemHidden.value = imagemUrl.value;
+});
+
+// Carregar ícones genéricos
+async function loadGenericIcons() {
+  const genericGrid = document.getElementById('genericGrid');
+  
+  if (genericGrid.children.length > 0) return; // Já carregado
+  
+  const categorias = ['roupas', 'tenis', 'acessorios', 'maquiagem', 'esmalte', 'farmacia', 'tecnologia', 'dia'];
+  
+  categorias.forEach(cat => {
+    const icon = document.createElement('div');
+    icon.className = 'generic-icon';
+    icon.dataset.url = `/uploads/genericas/${cat}.svg`;
+    icon.innerHTML = `<img src="/uploads/genericas/${cat}.svg" alt="${cat}">`;
+    icon.addEventListener('click', () => {
+      // Remover seleção anterior
+      document.querySelectorAll('.generic-icon').forEach(i => i.classList.remove('selected'));
+      icon.classList.add('selected');
+      imagemHidden.value = icon.dataset.url;
+    });
+    genericGrid.appendChild(icon);
+  });
+}
+
+// ===== SISTEMA DE EDIÇÃO DE PRODUTOS =====
+
+let produtoEditando = null;
+
+async function editarProduto(id) {
+  try {
+    // Buscar produto
+    const produto = produtos.find(p => p._id === id);
+    if (!produto) {
+      showToast('Produto não encontrado', 'error');
+      return;
+    }
+    
+    produtoEditando = produto;
+    
+    // Preencher formulário de edição
+    const editForm = document.getElementById('editForm');
+    editForm.innerHTML = `
+      <div>
+        <label>Nome:</label>
+        <input type="text" id="editNome" value="${produto.nome || ''}" required />
+      </div>
+      
+      <div>
+        <label>Descrição:</label>
+        <textarea id="editDescricao">${produto.descricao || ''}</textarea>
+      </div>
+      
+      <div>
+        <label>Preço:</label>
+        <input type="text" id="editPreco" value="${produto.preco || ''}" required />
+      </div>
+      
+      <div>
+        <label>Categoria:</label>
+        <select id="editCategoria" required>
+          <option value="">Selecione...</option>
+          <option value="roupas" ${produto.categoria === 'roupas' ? 'selected' : ''}>Roupas</option>
+          <option value="tenis" ${produto.categoria === 'tenis' ? 'selected' : ''}>Tenis</option>
+          <option value="acessorios" ${produto.categoria === 'acessorios' ? 'selected' : ''}>Acessórios</option>
+          <option value="maquiagem" ${produto.categoria === 'maquiagem' ? 'selected' : ''}>Maquiagem</option>
+          <option value="esmalte" ${produto.categoria === 'esmalte' ? 'selected' : ''}>Esmalte</option>
+          <option value="farmacia" ${produto.categoria === 'farmacia' ? 'selected' : ''}>Farmacia</option>
+          <option value="tecnologia" ${produto.categoria === 'tecnologia' ? 'selected' : ''}>Tecnologia</option>
+          <option value="dia" ${produto.categoria === 'dia' ? 'selected' : ''}>Do dia</option>
+        </select>
+      </div>
+      
+      <div>
+        <label>Imagem (URL):</label>
+        <input type="url" id="editImagem" value="${produto.imagem || ''}" placeholder="https://exemplo.com/imagem.jpg" />
+        ${produto.imagem ? `<div style="margin-top: 1rem;"><img src="${produto.imagem}" style="max-width: 200px; border-radius: 8px;" /></div>` : ''}
+      </div>
+      
+      <div>
+        <label>Links de Compra:</label>
+        <div id="editLinksContainer">
+          ${(produto.link || []).map((l, i) => `
+            <div class="link-group" style="margin-bottom: 0.75rem;">
+              <input type="text" class="edit-link-input" value="${l}" placeholder="https://exemplo.com/produto" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;" />
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" onclick="adicionarLinkEdicao()" style="margin-top: 0.5rem; background: var(--success-color); padding: 0.5rem 1rem; border-radius: 8px; color: white; border: none; cursor: pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 0.25rem;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Adicionar Link
+        </button>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+        <button type="button" class="btn-save" onclick="salvarEdicao()">Salvar Alterações</button>
+      </div>
+    `;
+    
+    // Mostrar modal
+    document.getElementById('editModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+  } catch (error) {
+    console.error('Erro ao editar:', error);
+    showToast('Erro ao carregar produto para edição', 'error');
+  }
+}
+
+function adicionarLinkEdicao() {
+  const container = document.getElementById('editLinksContainer');
+  const linkGroup = document.createElement('div');
+  linkGroup.className = 'link-group';
+  linkGroup.style.marginBottom = '0.75rem';
+  linkGroup.innerHTML = `
+    <input type="text" class="edit-link-input" placeholder="https://exemplo.com/produto" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;" />
+  `;
+  container.appendChild(linkGroup);
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+  document.body.style.overflow = 'auto';
+  produtoEditando = null;
+}
+
+async function salvarEdicao() {
+  if (!produtoEditando) return;
+  
+  const nome = document.getElementById('editNome').value.trim();
+  const descricao = document.getElementById('editDescricao').value.trim();
+  const preco = document.getElementById('editPreco').value.trim();
+  const categoria = document.getElementById('editCategoria').value;
+  const imagem = document.getElementById('editImagem').value.trim();
+  const links = Array.from(document.querySelectorAll('.edit-link-input'))
+    .map(input => input.value.trim())
+    .filter(val => val !== '');
+  
+  if (!nome || !categoria) {
+    showToast('Preencha os campos obrigatórios', 'warning');
+    return;
+  }
+  
+  const produtoAtualizado = {
+    nome,
+    descricao,
+    preco,
+    imagem: imagem || produtoEditando.imagem,
+    categoria,
+    link: links
   };
+  
+  try {
+    const response = await fetch(`${API_URL}/${produtoEditando._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(produtoAtualizado)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar produto');
+    }
+    
+    showToast('Produto atualizado com sucesso!', 'success');
+    closeEditModal();
+    await fetchProdutos(false);
+    
+  } catch (error) {
+    console.error('Erro ao salvar:', error);
+    showToast('Erro ao salvar alterações', 'error');
+  }
+}
+
+// Fechar modal ao clicar ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (!document.getElementById('editModal').classList.contains('hidden')) {
+      closeEditModal();
+    }
+  }
 });
 
-searchInput.addEventListener("input", () => {
-  paginaAtual = 1;
-  fetchProdutos();
-});
-
-const categoriesContainer = document.querySelector(".category-buttons-container");
-let categoriasColapsadas = true;
-
-toggleCategoriesBtn.addEventListener("click", () => {
-  categoriasColapsadas = !categoriasColapsadas;
-  categoriesContainer.classList.toggle("collapsed");
-  toggleCategoriesBtn.textContent = categoriasColapsadas ? "Mostrar Categorias" : "Ocultar Categorias";
-});
-
-
-
-
-// Atualização automática a cada 5 segundos
-setInterval(fetchProdutos, 5000);
+console.log('✓ Sistema de upload e edição carregado');
